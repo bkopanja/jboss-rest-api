@@ -6,6 +6,7 @@ public class UserModel {
     private String name;
     private String phone;
     private String website;
+    private long extId;
     private AddressModel address;
 
     public long getId() {
@@ -38,6 +39,14 @@ public class UserModel {
 
     public void setWebsite(String website) {
         this.website = website;
+    }
+
+    public long getExtId() {
+        return extId;
+    }
+
+    public void setExtId(long extId) {
+        this.extId = extId;
     }
 
     public AddressModel getAddress() {

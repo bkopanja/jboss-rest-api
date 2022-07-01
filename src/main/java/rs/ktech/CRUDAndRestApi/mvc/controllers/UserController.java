@@ -7,13 +7,13 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-
+import javax.ws.rs.core.MediaType;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
 import rs.ktech.CRUDAndRestApi.data.User;
-import rs.ktech.CRUDAndRestApi.data.UserService;
+import rs.ktech.CRUDAndRestApi.data.UserDAO;
 import rs.ktech.CRUDAndRestApi.mvc.models.AddressModel;
 import rs.ktech.CRUDAndRestApi.mvc.models.UserModel;
 
@@ -21,16 +21,16 @@ import rs.ktech.CRUDAndRestApi.mvc.models.UserModel;
 public class UserController {
 
     @Inject
-    private UserService userService;
+    UserDAO userDAO;
 
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     public String getAllUsers() {
 
         List<UserModel> users = new ArrayList<UserModel>();
         Connection conn = null;
 
-        List<User> apiUsers = userService.findAll();
+        List<User> apiUsers = userDAO.findAll();
 
         for (User user : apiUsers) {
             UserModel userModel = new UserModel();
@@ -51,8 +51,8 @@ public class UserController {
         }
 
         Gson gson = new GsonBuilder()
-                .serializeNulls()
-                .create();
+                            .serializeNulls()
+                            .create();
 
         return gson.toJson(users);
     }

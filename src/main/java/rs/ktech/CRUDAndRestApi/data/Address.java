@@ -10,12 +10,14 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import rs.ktech.CRUDAndRestApi.mvc.models.AddressModel;
+
 @Entity
 @Table(name = "address")
 public class Address {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "address_id_seq")
     private long id;
 
     @Column
@@ -81,5 +83,28 @@ public class Address {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public static AddressModel toAddressModel(Address address) {
+        AddressModel addressModel = new AddressModel();
+
+        addressModel.setId(address.getId());
+        addressModel.setStreet(address.getStreet());
+        addressModel.setCity(address.getCity());
+        addressModel.setSuite(address.getSuite());
+        addressModel.setZipcode(address.getZipcode());
+
+        return addressModel;
+    }
+
+    public static Address fromAddressModel(AddressModel addressModel) {
+        Address address = new Address();
+
+        address.setStreet(addressModel.getStreet());
+        address.setCity(addressModel.getCity());
+        address.setSuite(addressModel.getSuite());
+        address.setZipcode(addressModel.getZipcode());
+
+        return address;
     }
 }
