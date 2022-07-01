@@ -3,24 +3,26 @@ package rs.ktech.CRUDAndRestApi.mvc.controllers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import javax.naming.InitialContext;
-import javax.sql.DataSource;
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import rs.ktech.CRUDAndRestApi.data.User;
+import rs.ktech.CRUDAndRestApi.data.UserService;
 import rs.ktech.CRUDAndRestApi.mvc.models.AddressModel;
 import rs.ktech.CRUDAndRestApi.mvc.models.UserModel;
 
 @Path("/users")
 public class UserController {
+
+    @Inject
+    private UserService userService;
+
     @GET
     @Produces("application/json")
     public String getAllUsers() {
@@ -28,47 +30,24 @@ public class UserController {
         List<UserModel> users = new ArrayList<UserModel>();
         Connection conn = null;
 
-        try {
-            InitialContext ctx = new InitialContext();
-            DataSource ds = (DataSource)ctx.lookup("java:jboss/datasources/PostgresDS");
-            conn = ds.getConnection();
+        List<User> apiUsers = userService.findAll();
 
-            Statement st = conn.createStatement();
+        for (User user : apiUsers) {
+            UserModel userModel = new UserModel();
+            userModel.setId(user.getId());
+            userModel.setName(user.getName());
+            userModel.setPhone(user.getPhone());
 
-            String sql = "select u.*, a.street, a.zipcode, a.city, a.suite " +
-                                 "from api_user u " +
-                                 "left join address a on u.address_id = a.id";
+            AddressModel addressModel = new AddressModel();
+            addressModel.setId(user.getAddress().getId());
+            addressModel.setStreet(user.getAddress().getStreet());
+            addressModel.setSuite(user.getAddress().getSuite());
+            addressModel.setCity(user.getAddress().getCity());
+            addressModel.setZipcode(user.getAddress().getZipcode());
 
-            ResultSet rs = st.executeQuery(sql);
+            userModel.setAddress(addressModel);
 
-            while(rs.next()) {
-                UserModel userModel = new UserModel();
-                userModel.setId(rs.getInt("id"));
-                userModel.setName(rs.getString("name"));
-                userModel.setPhone(rs.getString("phone"));
-
-                AddressModel addressModel = new AddressModel();
-                addressModel.setId(rs.getInt("address_id"));
-                addressModel.setStreet(rs.getString("street"));
-                addressModel.setSuite(rs.getString("suite"));
-                addressModel.setCity(rs.getString("city"));
-                addressModel.setZipcode(rs.getString("zipcode"));
-
-                userModel.setAddress(addressModel);
-
-                users.add(userModel);
-            }
-
-        } catch (Exception ex) {
-            // ... code to handle exceptions
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
-                }
-            }
+            users.add(userModel);
         }
 
         Gson gson = new GsonBuilder()
