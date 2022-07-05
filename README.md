@@ -22,3 +22,41 @@ The app runs on Java 11
 
 The DB runs on PostgreSQL 12.x, please create a DB and user that can access it and then execute
 `src/main/resources/db/initial-db.sql` for the initial DB structure
+
+# APP Explanation
+
+The app has 3 Controllers:
+
+1. ExternalApiUserRestController.java
+2. UserRestController.java
+3. AddressRestController.java
+
+## ExternalApiUserRestController.java
+
+This controller is in charge of communicating with the external API that I've found by googling for a "dummy api". This external API is
+created for quick testing and was a perfect candidate for this integration as it provides user data that looks like a real-world data.
+
+The external api is located here: https://jsonplaceholder.typicode.com/
+
+## UserRestController.java
+
+Once we import users into our DB using the external API this controller does the standard set of actions on our users:
+
+- get a list of all users
+- get a single user
+- update a user
+- delete a user
+
+## AddressRestController.java
+
+When we import users into our DB alongside them we're creating Address entities as well so this controller again
+does the standard set of actions on our addresses:
+
+- get a list of all addresses
+- get a single address
+- update an address
+- delete an address
+
+# Swagger
+
+When you land on a first page of this app you're freeted with Swagger-UI so there you can test all API calls and see how endpoints actually work
