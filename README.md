@@ -59,4 +59,4 @@ does the standard set of actions on our addresses:
 
 # Swagger
 
-When you land on a first page of this app you're freeted with Swagger-UI so there you can test all API calls and see how endpoints actually work
+When you land on a first page of this app you're greeted with the Swagger-UI. There you can test all API calls and see how endpoints actually work.
