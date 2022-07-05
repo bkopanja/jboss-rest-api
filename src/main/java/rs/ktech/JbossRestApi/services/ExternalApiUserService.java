@@ -21,7 +21,7 @@ public class ExternalApiUserService implements Serializable {
 
     /**
      * Fetches a list of users from an external system and preserves them in our DB
-     * If users already exist in our DB it will update them instead
+     * If a user already exists in our DB the endpoint will update it instead
      * @param userModels
      * @return
      */
@@ -30,9 +30,9 @@ public class ExternalApiUserService implements Serializable {
         List<User> allUserForIds = userDAO.findAllByExtId(userIds);
         List<UserModel> models = new ArrayList<>();
 
-        Map<Long, User> userMap = allUserForIds.stream().collect(Collectors.toMap(User::getExtId, user -> user));
+        Map<Long, User> existingUsersMap = allUserForIds.stream().collect(Collectors.toMap(User::getExtId, user -> user));
         userModels.forEach(um -> {
-            User existing = userMap.remove(um.getId());
+            User existing = existingUsersMap.remove(um.getId());
             if (existing != null) {
                 existing.setExtId(um.getId());
                 existing.setName(um.getName());
@@ -56,6 +56,12 @@ public class ExternalApiUserService implements Serializable {
                 userDAO.save(user);
                 models.add(User.toUserModel(user));
             }
+        });
+
+        // delete users we don't need anymore (if they're in the map after updated they're "extra"
+        // we don't need anymore according to external API as it returns always ALL users it has
+        existingUsersMap.forEach((id, user) -> {
+            userDAO.delete(user);
         });
 
         return models;

@@ -36,7 +36,7 @@ public class ExternalApiUserRestController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Returns list of imported users", notes = "Returns JSON", response = String.class)
+    @ApiOperation(value = "Returns a list of imported users", notes = "Returns JSON", response = String.class)
     public String importExternalUsers() {
 
         List<UserModel> response= new ArrayList<>();
